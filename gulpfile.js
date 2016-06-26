@@ -5,7 +5,8 @@ var sass = require('gulp-sass');
 gulp.task('sass', function() {
     return gulp.src('src/scss/*.scss')
         .pipe(sass())
-        .pipe(gulp.dest('dist/css'));
+        .pipe(gulp.dest('dist/css'))
+        .pipe(browserSync.stream());
 });
 
 // Excercise 2 - Concatenate & Minify JS
@@ -18,7 +19,8 @@ gulp.task('scripts', function() {
         .pipe(gulp.dest('dist/js'))
         .pipe(uglify())
         .pipe(rename('all.min.js'))
-        .pipe(gulp.dest('dist/js'));
+        .pipe(gulp.dest('dist/js'))
+        .pipe(browserSync.stream());
 });
 
 // Excercise 3 - JS Lint
@@ -37,17 +39,28 @@ gulp.task('imagemin', () =>
 		.pipe(gulp.dest('dist/images'))
 );
 
+// Excercise 9 - browser-sync
+var browserSync = require('browser-sync').create();
+// the rest in watch task
+
 // Excercise 5 - Watch
 gulp.task('watch', function() {
-    gulp.watch('src/js/*.js', ['lint', 'scripts']);
-    gulp.watch('src/scss/*.scss', ['sass']);
-    gulp.watch('src/images/*.png', ['imagemin']);
+    browserSync.init({
+        server: {
+            baseDir: "./dist"
+        }
+    });
+
+    gulp.watch('src/js/*.js', ['lint', 'scripts']).on('change', browserSync.reload);
+    gulp.watch('src/scss/*.scss', ['sass']).on('change', browserSync.reload);
+    gulp.watch('src/images/*.png', ['imagemin']).on('change', browserSync.reload);
 });
 
 // Excercise 6 - Copy index.html
 gulp.task('copy', function() {
   gulp.src('src/index.html')
-      .pipe(gulp.dest('dist'));
+      .pipe(gulp.dest('dist'))
+      .pipe(browserSync.stream());
 });
 
 // Excercise 7 - Clean
@@ -57,7 +70,7 @@ gulp.task('clean', function() {
         .pipe(clean());
 });
 
-// Serve
+// Excercise 8 - Serve
 var serve = require('gulp-serve');
 gulp.task('serve', serve({
   root: ['dist'],
