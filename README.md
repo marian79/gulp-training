@@ -28,3 +28,6 @@ Cleaning `dist` folder before each build
 
 #### 8. Serve
 Serving application
+
+#### 9. BrowserSync
+Added BrowserSync to some tasks to show how it works
